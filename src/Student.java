@@ -3,10 +3,10 @@
  */
 public class Student {
 
-    private String m_Name;
-    private int m_Course;
-    private int m_Group;
-    private float m_Mark;
+    private String name;
+    private int course;
+    private int group;
+    private float mark;
 
     public Student( String in_name, int in_course, int in_group, float in_mark ){
         setName( in_name );
@@ -16,34 +16,34 @@ public class Student {
     }
 
     public String getName() {
-        return m_Name;
+        return name;
     }
 
     public void setName(String in_Name) {
-        this.m_Name = in_Name;
+        this.name = in_Name;
     }
 
     public int getCourse() {
-        return m_Course;
+        return course;
     }
 
     public void setCourse(int in_Course) {
-        this.m_Course = in_Course;
+        this.course = in_Course;
     }
 
     public int getGroup() {
-        return m_Group;
+        return group;
     }
 
     public void setGroup(int in_Group) {
-        this.m_Group = in_Group;
+        this.group = in_Group;
     }
 
     public float getMark() {
-        return m_Mark;
+        return mark;
     }
 
     public void setMark(float in_mark) {
-        this.m_Mark = in_mark;
+        this.mark = in_mark;
     }
 }

@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,9 +15,10 @@ import java.awt.event.ActionListener;
  */
 public class MyFrame extends JFrame implements ActionListener {
 
-    private StudentDialog m_AddDialog;
-    private JButton m_btnAddStudent;
-    private JTable m_StudentTable;
+    private StudentDialog addDialog;
+    private JButton btnAddStudent;
+    private JTable studentTable;
+    private Connection databaseConnection;
     //private JTextField myText; //так и не понял зачем оно
 
     private static String[] m_TableHeader = { "Name", "Course", "Group", "Mark" };
@@ -27,47 +30,82 @@ public class MyFrame extends JFrame implements ActionListener {
     };
 
     public MyFrame(){
-        //myText = new JTextField();
-        //Инициализация элементов формы
-        /*
-        m_TableModel.addRow( new Object[] {
-                (String) "ivanov",
-                (int) 1,
-                (int) 1,
-                (float) 8.9
-        });
-        */
-        m_StudentTable = new JTable( m_TableModel );
-        m_btnAddStudent = new JButton( "Add" );
+
+        studentTable = new JTable( m_TableModel );
+        btnAddStudent = new JButton( "Add" );
+
+        //JDBC initialisatin
+        databaseConnection = null;
+        String url = "jdbc:mysql://localhost:3306/univer";
+        String name = "root";
+        String password = "12345678";
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            System.out.println("driver ok ");
+            databaseConnection = DriverManager.getConnection(url, name, password);
+            System.out.println("Соединение установлено");
+            /*String query = "select * from test";
+            PreparedStatement preStatement = databaseConnection.prepareStatement(query);
+            ResultSet resultSet = preStatement.executeQuery();
+
+            while(resultSet.next()) {
+
+            }
+*/
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         //как по мне слишком очевидные коменты и будем пимать коменты на инглише
         //Назначение слушателей
-        m_btnAddStudent.addActionListener( this );
+        btnAddStudent.addActionListener(this);
 
         //Добавление элементов на форму
-        this.setLayout( new BorderLayout() );
+        this.setLayout(new BorderLayout());
 
-        getContentPane().add( m_StudentTable.getTableHeader(), BorderLayout.NORTH );
-        getContentPane().add( m_StudentTable, BorderLayout.CENTER );
-        getContentPane().add( m_btnAddStudent, BorderLayout.SOUTH );
+        getContentPane().add( studentTable.getTableHeader(), BorderLayout.NORTH );
+        getContentPane().add(studentTable, BorderLayout.CENTER );
+        getContentPane().add(btnAddStudent, BorderLayout.SOUTH );
 
         pack();
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if ( event.getSource() == m_btnAddStudent ) {
-            m_AddDialog = new StudentDialog( this );
-            m_AddDialog.setVisible( true );
-            if ( m_AddDialog.accepted() ) {
-                Student in_Student = m_AddDialog.getStudent();
+
+        if ( event.getSource() == btnAddStudent) {
+
+            addDialog = new StudentDialog( this );
+            addDialog.setVisible(true);
+            if ( addDialog.accepted() ) {
+                Student inStudent = addDialog.getStudent();
                 m_TableModel.addRow( new Object[] {
-                        (String) in_Student.getName(),
-                        (int) in_Student.getCourse(),
-                        (int) in_Student.getGroup(),
-                        (float) in_Student.getMark()
+                        (String) inStudent.getName(),
+                        (int) inStudent.getCourse(),
+                        (int) inStudent.getGroup(),
+                        (float) inStudent.getMark()
                 });
+                try {
+                    PreparedStatement ps =
+                            databaseConnection.prepareStatement("insert into students(name,course,gr,mark) values(?,?,?,?)");
+
+                    ps.setString(1,inStudent.getName());
+                    ps.setInt(2,inStudent.getCourse());
+                    ps.setInt(3,inStudent.getGroup());
+                    ps.setFloat(4,inStudent.getMark());
+                    ps.executeUpdate();
+
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             }
+
         }
     }
 }
