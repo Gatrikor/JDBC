@@ -7,12 +7,11 @@
  */
 public class Demo {
     public static void main(String[] args) {
-        MyFrame my = new MyFrame();
+        MyFrame mainFrame = new MyFrame();
         // DrawingPanel my1= new DrawingPanel();
         // my1.setVisible(true);
-        my.pack();
-        my.setVisible(true);
-        my.setSize(600,400);
+        mainFrame.setVisible(true);
+        mainFrame.setSize(600,400);
     }
 
 }
